@@ -62,6 +62,7 @@ class Camera;
 class FrameFilter;
 class SurfaceRenderer;
 class WaterTable2;
+class SourceImage;
 typedef Misc::FunctionCall<GLContextData&> AddWaterFunction;
 
 class Sandbox:public Vrui::Application,public GLObject
@@ -135,6 +136,9 @@ class Sandbox:public Vrui::Application,public GLObject
 		GLsizei shadowBufferSize[2]; // Size of the shadow rendering frame buffer
 		GLuint shadowFramebufferObject; // Frame buffer object to render shadow maps
 		GLuint shadowDepthTextureObject; // Depth texture for the shadow rendering frame buffer
+		GLsizei sourceImageSize[2]; // Size of the overlay image
+		GLuint sourceImageTextureObject; // Image object for overlay image
+		GLuint sourceImageFramebufferObject; // Frame buffer object for overlay image.
 		
 		/* Constructors and destructors: */
 		DataItem(void);
@@ -159,6 +163,7 @@ class Sandbox:public Vrui::Application,public GLObject
 	unsigned int heightMapVersion; // Version number of height map
 	Box bbox; // Bounding box around the surface
 	SurfaceRenderer* surfaceRenderer; // Renderer for the surface
+	SourceImage* sourceImage; // Extra image for visualization
 	WaterTable2* waterTable; // Water flow simulation object
 	double waterSpeed; // Relative speed of water flow simulation
 	int waterMaxSteps; // Maximum number of water simulation steps per frame

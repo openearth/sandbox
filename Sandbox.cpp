@@ -89,7 +89,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include "FrameFilter.h"
 #include "SurfaceRenderer.h"
 #include "WaterTable2.h"
-
+#include "SourceImage.h"
 /*******************************************
 Static elements of class Sandbox::WaterTool:
 *******************************************/
@@ -357,6 +357,25 @@ void Sandbox::receiveFilteredFrame(const Kinect::FrameBuffer& frameBuffer)
 	{
 	/* Put the new frame into the frame input buffer: */
 	filteredFrames.postNewValue(frameBuffer);
+
+	int width = frameBuffer.getSize(0);
+	int height = frameBuffer.getSize(1);
+	// image
+	Images::RGBImage dti(width, height);
+	// depths
+	GLfloat* dtiPtr= (GLfloat*)frameBuffer.getBuffer();
+	// current color?
+	Images::RGBImage::Color* ciPtr=dti.modifyPixels();
+	for(int y=0;y<height;++y)
+	  // next position in pointers...?
+	  for(int x=0;x<width;++x,++dtiPtr,++ciPtr)
+	    {
+	      // current color
+	      float scale = 128.0;
+	      GLColor<GLfloat,3> tc((*dtiPtr)/scale,(*dtiPtr)/scale,(*dtiPtr)/scale);
+	      *ciPtr=tc;
+	    }
+	Images::writeImageFile(dti, "frame.png");
 	
 	/* Wake up the foreground thread: */
 	Vrui::requestUpdate();
@@ -585,6 +604,7 @@ Sandbox::Sandbox(int& argc,char**& argv)
 	 surfaceMaterial(GLMaterial::Color(0.8f,0.8f,0.8f),GLMaterial::Color(1.0f,1.0f,1.0f),25.0f),
 	 heightMapVersion(0),
 	 surfaceRenderer(0),
+	 sourceImage(0),
 	 waterTable(0),waterSpeed(1.0),waterMaxSteps(30),rainStrength(0.25f),
 	 rmFrameFilter(0),rainMaker(0),addWaterFunction(0),addWaterFunctionRegistered(false),
 	 fixProjectorView(false),hillshade(false),useShadows(false),useHeightMap(false),
@@ -919,6 +939,7 @@ Sandbox::Sandbox(int& argc,char**& argv)
 		bbox.addPoint(basePlane.project(basePlaneCorners[i])+basePlane.getNormal()*elevationMin);
 		bbox.addPoint(basePlane.project(basePlaneCorners[i])+basePlane.getNormal()*elevationMax);
 		}
+	sourceImage = new SourceImage("source.png");
 	
 	/* Initialize the water flow simulator: */
 	waterTable=new WaterTable2(wtSize[0],wtSize[1],basePlane,basePlaneCorners);
@@ -1129,7 +1150,28 @@ void Sandbox::display(GLContextData& contextData) const
 	{
 	/* Get the data item: */
 	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
-	
+
+	if(sourceImage!=0)
+	  {
+
+	    // generate a framebuffer for the overlay image
+	    glGenFramebuffersEXT(1,&dataItem->sourceImageTextureObject);
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->sourceImageFramebufferObject);
+	    
+	    glGenTextures(1,&dataItem->sourceImageTextureObject);
+	    glBindTexture(GL_TEXTURE_2D,dataItem->sourceImageTextureObject);
+	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_COMPARE_MODE_ARB,GL_COMPARE_R_TO_TEXTURE);
+	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_COMPARE_FUNC_ARB,GL_LEQUAL);
+	    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA32F, dataItem->sourceImageSize[0],dataItem->sourceImageSize[1],0,GL_RGBA,GL_FLOAT,0);
+	    glBindTexture(GL_TEXTURE_2D,0);
+
+	    
+
+	  }
 	if(waterTable!=0)
 		{
 		/* Update the water table's bathymetry: */
@@ -1164,7 +1206,7 @@ void Sandbox::display(GLContextData& contextData) const
 	if(dataItem->heightColorMapVersion!=heightMapVersion)
 		{
 		/* Upload the height color map as a 1D texture: */
-		glBindTexture(GL_TEXTURE_1D,dataItem->heightColorMapObject);
+ 		glBindTexture(GL_TEXTURE_1D,dataItem->heightColorMapObject);
 		glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);

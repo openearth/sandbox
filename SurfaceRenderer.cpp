@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include <GL/GLGeometryVertex.h>
 
 #include "WaterTable2.h"
+#include "SourceImage.h"
 
 namespace {
 
@@ -254,7 +255,9 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				vertexMain+="\
 					\n";
 			}
-		
+		if(sourceImage!=0)
+		  {
+		  }
 		if(waterTable!=0)
 			{
 			/* Add declarations for water handling: */
@@ -349,7 +352,9 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				illuminate(baseColor);\n\
 				\n";
 			}
-		
+		if(sourceImage!=0)
+		  {
+		  }
 		if(waterTable!=0)
 			{
 			/* Declare the water handling functions: */
@@ -418,6 +423,9 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			/* Query illumination uniform variables: */
 			*(ulPtr++)=glGetUniformLocationARB(result,"tangentDepthProjection");
 			}
+		if(sourceImage!=0)
+		  {
+		  }
 		if(waterTable!=0)
 			{
 			/* Query water handling uniform variables: */
@@ -445,7 +453,10 @@ SurfaceRenderer::SurfaceRenderer(const unsigned int sSize[2],const SurfaceRender
 	 usePreboundDepthTexture(false),
 	 drawContourLines(true),contourLineFactor(1.0f),
 	 useHeightMap(true),heightMapScale(1.0f),heightMapOffset(0.0f),
-	 illuminate(false),waterTable(0),advectWaterTexture(false),surfaceSettingsVersion(1),
+	 illuminate(false),
+	 sourceImage(0),
+	 waterTable(0),
+	 advectWaterTexture(false),surfaceSettingsVersion(1),
 	 waterOpacity(2.0f),
 	 depthImageVersion(1),
 	 animationTime(0.0)
@@ -1067,7 +1078,9 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 		/* Upload the tangent-plane depth projection matrix: */
 		glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,tangentDepthProjectionMatrix);
 		}
-	
+	if(sourceImage!=0)
+	  {
+	  }
 	if(waterTable!=0)
 		{
 		/* Upload the water table texture coordinate matrix: */
@@ -1107,6 +1120,9 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
 	
 	/* Unbind all textures and buffers: */
+	if(sourceImage!=0)
+	  {
+	  }
 	if(waterTable!=0)
 		{
 		glActiveTextureARB(GL_TEXTURE4_ARB);
@@ -1212,7 +1228,9 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 	
 	/* Upload the height color map texture coordinate transformation: */
 	glUniform2fARB(dataItem->globalAmbientHeightMapShaderUniforms[6],heightMapScale,heightMapOffset);
-	
+	if(sourceImage!=0)
+	  {
+	  }
 	if(waterTable!=0)
 		{
 		/* Bind the water level texture: */
@@ -1236,6 +1254,8 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
 	
 	/* Unbind all textures and buffers: */
+	if(sourceImage!=0) {
+	}
 	if(waterTable!=0)
 		{
 		glActiveTextureARB(GL_TEXTURE3_ARB);
@@ -1311,7 +1331,8 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
 	
 	/* Upload the height color map texture coordinate transformation: */
 	glUniform2fARB(dataItem->shadowedIlluminatedHeightMapShaderUniforms[7],heightMapScale,heightMapOffset);
-	
+	if(sourceImage!=0) {
+	}
 	if(waterTable!=0)
 		{
 		/* Bind the water level texture: */
@@ -1357,6 +1378,9 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
 	
 	/* Unbind all textures and buffers: */
+	if(sourceImage!=0)
+	  {
+	  }
 	if(waterTable!=0)
 		{
 		glActiveTextureARB(GL_TEXTURE3_ARB);

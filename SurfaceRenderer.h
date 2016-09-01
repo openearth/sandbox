@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 /* Forward declarations: */
 class GLLightTracker;
 class WaterTable2;
+class SourceImage;
 
 class SurfaceRenderer:public GLObject
 	{
@@ -88,6 +89,7 @@ class SurfaceRenderer:public GLObject
 	bool useHeightMap; // Flag whether to use a height color map for the surface
 	GLfloat heightMapScale,heightMapOffset; // Scale and offset values to convert from elevation to height color map texture coordinates
 	bool illuminate; // Flag whether the surface shall be illuminated
+	SourceImage* sourceImage; // Pointer to an optional extra image
 	WaterTable2* waterTable; // Pointer to the water table object; if NULL, water is ignored
 	bool advectWaterTexture; // Flag whether water texture coordinates are advected to visualize water flow
 	unsigned int surfaceSettingsVersion; // Version number of surface settings to invalidate surface rendering shader on changes
