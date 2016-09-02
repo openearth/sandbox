@@ -485,6 +485,7 @@ SurfaceRenderer::SurfaceRenderer(const unsigned int sSize[2],const SurfaceRender
      sourceImage(0),
      waterTable(0),
      advectWaterTexture(false),surfaceSettingsVersion(1),
+     sourceImageOpacity(2.0f),
      waterOpacity(2.0f),
      depthImageVersion(1),
      animationTime(0.0)
@@ -1121,11 +1122,11 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
     }
     if(sourceImage!=0)
     {
-        glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,sourceImage->getSourceImageTextureMatrix());
+        glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,sourceImage->getTextureMatrix());
 
         /* Bind the overlay texture: */
         glActiveTextureARB(GL_TEXTURE5_ARB);
-        sourceImage->bindQuantityTexture(contextData);
+        sourceImage->bindTexture(contextData);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
@@ -1297,7 +1298,7 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
         /* Upload the water opacity factor: */
 
         glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[10],5);
-        glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[11],1, GL_FALSE, sourceImage->getTextureMatrix());
+        glUniformMatrix4fvARB(dataItem->globalAmbientHeightMapShaderUniforms[11],1, GL_FALSE, sourceImage->getTextureMatrix());
         glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[12],sourceImageOpacity);
     }
     if(waterTable!=0)

@@ -93,6 +93,7 @@ class SurfaceRenderer:public GLObject
 	WaterTable2* waterTable; // Pointer to the water table object; if NULL, water is ignored
 	bool advectWaterTexture; // Flag whether water texture coordinates are advected to visualize water flow
 	unsigned int surfaceSettingsVersion; // Version number of surface settings to invalidate surface rendering shader on changes
+	GLfloat sourceImageOpacity; // Scaling factor for sourceImage opacity
 	GLfloat waterOpacity; // Scaling factor for water opacity
 	Kinect::FrameBuffer depthImage; // The most recent float-pixel depth image
 	unsigned int depthImageVersion; // Version number of the depth image
@@ -116,6 +117,7 @@ class SurfaceRenderer:public GLObject
 	void setUseHeightMap(bool newUseHeightMap); // Enable or disable height-based surface coloring
 	void setHeightMapRange(GLsizei newHeightMapSize,GLfloat newMinElevation,GLfloat newMaxElevation); // Sets the elevation range for height color mapping
 	void setIlluminate(bool newIlluminate); // Sets the illumination flag
+	void setSourceImage(SourceImage* newSourceImage); // Sets the pointer to the source image; NULL is no image
 	void setWaterTable(WaterTable2* newWaterTable); // Sets the pointer to the water table; NULL disables water handling
 	void setAdvectWaterTexture(bool newAdvectWaterTexture); // Sets the water texture coordinate advection flag
 	void setWaterOpacity(GLfloat newWaterOpacity); // Sets the water opacity factor

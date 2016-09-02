@@ -21,3 +21,11 @@ void SourceImage::initContext(GLContextData& contextData) const
   
 };
 
+void SourceImage::bindTexture(GLContextData& contextData) const
+{
+  /* Get the data item: */
+  DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
+	
+  /* Bind the conserved quantities texture: */
+  glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->sourceImageTextureObject);
+}

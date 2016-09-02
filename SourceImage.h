@@ -21,14 +21,23 @@ class SourceImage:public GLObject
   public:
     GLuint sourceImageTextureObject;
     GLint sourceImageUniformLocation;
-    GLhandleARB sourceImageShader; 
+    GLhandleARB sourceImageShader;
   };
   
+ private:
+  GLfloat sourceImageTextureMatrix[16];
 
  public:
   SourceImage(std::string filename);
   virtual ~SourceImage();
   virtual void initContext(GLContextData& contextData) const;
+  void bindTexture(GLContextData& contextData) const; // Binds the image texture
+  
+  const GLfloat* getTextureMatrix(void) const // Returns the matrix transforming from camera space into image texture space
+  {
+    return sourceImageTextureMatrix;
+  }
+
   
 };
 #endif
