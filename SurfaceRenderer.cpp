@@ -1296,6 +1296,8 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 
         /* Upload the water opacity factor: */
 
+        glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[10],5);
+        glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[11],1, GL_FALSE, sourceImage->getTextureMatrix());
         glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[12],sourceImageOpacity);
     }
     if(waterTable!=0)
@@ -1322,6 +1324,8 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 
     /* Unbind all textures and buffers: */
     if(sourceImage!=0) {
+        glActiveTextureARB(GL_TEXTURE5_ARB);
+        glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
     }
     if(waterTable!=0)
     {
@@ -1399,6 +1403,16 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
     /* Upload the height color map texture coordinate transformation: */
     glUniform2fARB(dataItem->shadowedIlluminatedHeightMapShaderUniforms[7],heightMapScale,heightMapOffset);
     if(sourceImage!=0) {
+        /* Bind the overlay texture: */
+        glActiveTextureARB(GL_TEXTURE5_ARB);
+        glUniform1iARB(dataItem->shadowedIlluminatedHeightMapShaderUniforms[13], 5);
+
+        /* Upload the water table texture coordinate matrix: */
+        glUniformMatrix4fvARB(dataItem->shadowedIlluminatedHeightMapShaderUniforms[14],1,GL_FALSE,sourceImage->getTextureMatrix());
+
+        /* Upload the water opacity factor: */
+        glUniform1fARB(dataItem->shadowedIlluminatedHeightMapShaderUniforms[15],sourceImageOpacity);
+
     }
     if(waterTable!=0)
     {
@@ -1447,6 +1461,8 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
     /* Unbind all textures and buffers: */
     if(sourceImage!=0)
     {
+        glActiveTextureARB(GL_TEXTURE5_ARB);
+        glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
     }
     if(waterTable!=0)
     {
