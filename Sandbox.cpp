@@ -357,7 +357,11 @@ void Sandbox::receiveFilteredFrame(const Kinect::FrameBuffer& frameBuffer)
 	{
 	/* Put the new frame into the frame input buffer: */
 	filteredFrames.postNewValue(frameBuffer);
-
+	counter++;
+	if ((counter % 30) != 0) {
+	  return;
+	}
+	std::cout << "writing frame" << counter << std::endl;
 	int width = frameBuffer.getSize(0);
 	int height = frameBuffer.getSize(1);
 	// image
@@ -837,6 +841,9 @@ Sandbox::Sandbox(int& argc,char**& argv)
 	
 	/* Enable background USB event handling: */
 	usbContext.startEventHandling();
+
+	// count the number of frames
+	counter = 0;
 	
 	/* Open the Kinect camera device: */
 	camera=new Kinect::Camera(usbContext,cameraIndex);
@@ -940,6 +947,7 @@ Sandbox::Sandbox(int& argc,char**& argv)
 		bbox.addPoint(basePlane.project(basePlaneCorners[i])+basePlane.getNormal()*elevationMax);
 		}
 	sourceImage = new SourceImage("source.png");
+	sourceImage = NULL;
 	
 	/* Initialize the water flow simulator: */
 	waterTable=new WaterTable2(wtSize[0],wtSize[1],basePlane,basePlaneCorners);

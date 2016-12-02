@@ -153,6 +153,7 @@ class Sandbox:public Vrui::Application,public GLObject
 	USB::Context usbContext; // USB context for the Kinect camera device
 	Kinect::Camera* camera; // The Kinect camera device
 	unsigned int frameSize[2]; // Width and height of the camera's depth frames
+	long counter; // number of frames
 	Kinect::FrameSource::IntrinsicParameters cameraIps; // Intrinsic parameters of the Kinect camera
 	FrameFilter* frameFilter; // Processing object to filter raw depth frames from the Kinect camera
 	bool pauseUpdates; // Pauses updates of the topography

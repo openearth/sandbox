@@ -1,4 +1,4 @@
-########################################################################
+	########################################################################
 # Makefile for the Augmented Reality Sandbox.
 # Copyright (c) 2012-2015 Oliver Kreylos
 #
@@ -99,7 +99,7 @@ include $(VRUI_MAKEDIR)/BasicMakefile
 ########################################################################
 
 # Set location of configuration file directory:
-CFLAGS += -DCONFIGDIR='"$(ETCINSTALLDIR)"'
+CFLAGS += -g -DCONFIGDIR='"$(ETCINSTALLDIR)"'
 
 #
 # Calibration utility for Kinect 3D camera and projector:
